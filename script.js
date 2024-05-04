@@ -6,18 +6,34 @@ var boxes;
 var turnX = true;
 var moves = 0;
 
+// this is only for winning pattern
+// var winPattern = [
+//     [0, 1, 2],
+//     [3, 4, 5],
+//     [6, 7, 8],
+//     [0, 3, 6],
+//     [1, 4, 7],
+//     [2, 5, 8],
+//     [0, 4, 8],
+//     [2, 4, 6],
+// ];
+
+
+//  this is for winning pattern and also for line over winning one's 
+//  [0][1][2] = store winning pattern , 
+//  [3][4][5] = store line pattern over winning one's {transform: translate(0, 0) rotate(45deg);}....
 
 var winPattern = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
+    // [0, 1, 2, 3, 4, 5] = example from above
+    [0, 1, 2, 0, -8.9, 0],
+    [3, 4, 5, 0, 0, 0],
+    [6, 7, 8, 0, 8.6, 0],
+    [0, 3, 6, -8.3, 0, 90],
+    [1, 4, 7, 0, 0, 90],
+    [2, 5, 8, 8.35, 0, 90],
+    [0, 4, 8, 0, 0, 45],
+    [2, 4, 6, 0, 0, -45],
 ];
-
 
 
 // function restartGame() {
@@ -71,14 +87,10 @@ var winPattern = [
 
 
 function restartGame() {
-
     turnX = true;
     moves = 0;
-
     makeBox();
-
 }
-
 restartButton.addEventListener('click', restartGame);
 
 
@@ -98,11 +110,8 @@ restartButton.addEventListener('click', restartGame);
 
 
 function startGame() {
-
     document.getElementById("restart-btn").style.display = 'block';
-
     makeBox();
-
 }
 document.getElementById("start-btn").addEventListener("click", startGame);
 
@@ -121,15 +130,7 @@ document.getElementById("start-btn").addEventListener("click", startGame);
 
 
 function checkWinner() {
-
     for (var pattern of winPattern) {
-
-        // console.log(patern[0], patern[1], patern[2]);
-        // console.log(
-        //     boxes[patern[0]].innerText,
-        //     boxes[patern[1]].innerText,
-        //     boxes[patern[2]].innerText
-        // );
 
         var pos1Val = boxes[pattern[0]].innerText;
         var pos2Val = boxes[pattern[1]].innerText;
@@ -138,14 +139,30 @@ function checkWinner() {
         if (pos1Val !== "" && pos2Val !== "" && pos3Val !== "") {
 
             if (pos1Val === pos2Val && pos2Val === pos3Val) {
-                // console.log("winner is", pos1Val);
-                document.querySelector("#container").innerHTML = `<h1>The Winner is ${pos1Val}</h1>`;
+
+                // document.getElementById("line").style.width = "23vw";
+                document.getElementById("line").style.transform = `translate(${pattern[3]}vw,${pattern[4]}vw) rotate(${pattern[5]}deg)`;
+                document.getElementById("line").style.display = "block"; // Display the line when a winning pattern is found
+
+                boxes.forEach((box) => {
+                    box.disabled = true;
+                });
+
+                setTimeout(() => {
+
+                    document.querySelector("#container").innerHTML = `<h1>The Winner is ${pos1Val}</h1>`;
+                    document.getElementById("line").style.display = "none"; // Hide the line after displaying the winner message
+
+                }, 300);
+                
                 return true;
             }
         }
     }
+    // document.getElementById("line").style.display = "none"; // Hide the line if no winning pattern is found
     return false;
 }
+
 
 
 function makeBox() {
@@ -199,14 +216,13 @@ function playerTurn() {
                     return;
                 }
 
-                if (moves === 9) {
-                    document.querySelector("#container").innerHTML = `<h1>It's a Draw!</h1>`;
-                }
+                setTimeout(() => {
+                    if (moves === 9) {
+                        document.querySelector("#container").innerHTML = `<h1>It's a Draw!</h1>`;
+                    }
+                }, 300);
 
             }
         });
     });
 }
-
-
-

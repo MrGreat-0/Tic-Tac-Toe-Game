@@ -21,18 +21,21 @@ var moves = 0;
 
 //  this is for winning pattern and also for line over winning one's 
 //  [0][1][2] = store winning pattern , 
-//  [3][4][5] = store line pattern over winning one's {transform: translate(0, 0) rotate(45deg);}....
+//  [3][4][5] = store line pattern over winning one's {transform: translate(0, 0) rotate(0deg);}....for desktop...
+//  [6][7][8] = store line pattern over winning one's {transform: translate(0, 0) rotate(0deg);}....for media query - 800px...
+//  [7][10][11] = store line pattern over winning one's {transform: translate(0, 0) rotate(0deg);}....for media query - 600px...
+
 
 var winPattern = [
-    // [0, 1, 2, 3, 4, 5] = example from above
-    [0, 1, 2, 0, -8.9, 0],
-    [3, 4, 5, 0, 0, 0],
-    [6, 7, 8, 0, 8.6, 0],
-    [0, 3, 6, -8.3, 0, 90],
-    [1, 4, 7, 0, 0, 90],
-    [2, 5, 8, 8.35, 0, 90],
-    [0, 4, 8, 0, 0, 45],
-    [2, 4, 6, 0, 0, -45],
+    // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] = example from above
+    [0, 1, 2, 0, -8.9, 0, 0, -16.5, 0, 0, -18.7, 0],
+    [3, 4, 5, 0, 0, 0, 0, -0.3, 0, 0, 3, 0],
+    [6, 7, 8, 0, 8.6, 0, 0, 15.7, 0, 0, 25, 0],
+    [0, 3, 6, -8.3, 0, 90, -13.8, 0, 90, -20, 3, 90],
+    [1, 4, 7, 0, 0, 90, 0, 0, 90, 0, 3, 90],
+    [2, 5, 8, 8.35, 0, 90, 14, 0, 90, 20, 3, 90],
+    [0, 4, 8, 0, 0, 45, 0, 0, 49, 0, 3, 46],
+    [2, 4, 6, 0, 0, -45, 0, 0, -49, 0, 3, -47],
 ];
 
 
@@ -87,31 +90,20 @@ var winPattern = [
 
 
 function restartGame() {
+    document.getElementById("line").style.display = "none";
     turnX = true;
     moves = 0;
     makeBox();
+    window.addEventListener("resize", checkWinner);
+
 }
 restartButton.addEventListener('click', restartGame);
-
-
-
-// function startGame() {
-//     var startBtn = document.createElement("button");
-//     startBtn.id = "start-btn";
-//     startBtn.textContent = "Start";
-//     document.querySelector("#container").appendChild(startBtn);
-
-//     startBtn.addEventListener('click', function() {
-//         document.querySelector("#container").removeChild(startBtn); // Remove the start button
-//         makeBox(); // Start the game
-//     });
-// }
-
 
 
 function startGame() {
     document.getElementById("restart-btn").style.display = 'block';
     makeBox();
+    window.addEventListener("resize", checkWinner);
 }
 document.getElementById("start-btn").addEventListener("click", startGame);
 
@@ -140,9 +132,17 @@ function checkWinner() {
 
             if (pos1Val === pos2Val && pos2Val === pos3Val) {
 
-                // document.getElementById("line").style.width = "23vw";
-                document.getElementById("line").style.transform = `translate(${pattern[3]}vw,${pattern[4]}vw) rotate(${pattern[5]}deg)`;
-                document.getElementById("line").style.display = "block"; // Display the line when a winning pattern is found
+                var line = document.getElementById("line");
+
+                if (window.innerWidth <= 600) {
+                    line.style.transform = `translate(${pattern[9]}vw,${pattern[10]}vw) rotate(${pattern[11]}deg)`;
+                } else if (window.innerWidth <= 800) {
+                    line.style.transform = `translate(${pattern[6]}vw,${pattern[7]}vw) rotate(${pattern[8]}deg)`;
+                } else {
+                    line.style.transform = `translate(${pattern[3]}vw,${pattern[4]}vw) rotate(${pattern[5]}deg)`;
+                }
+
+                line.style.display = "block"; // Display the line when a winning pattern is found
 
                 boxes.forEach((box) => {
                     box.disabled = true;
@@ -151,10 +151,10 @@ function checkWinner() {
                 setTimeout(() => {
 
                     document.querySelector("#container").innerHTML = `<h1>The Winner is ${pos1Val}</h1>`;
-                    document.getElementById("line").style.display = "none"; // Hide the line after displaying the winner message
+                    line.style.display = "none"; // Hide the line after displaying the winner message
+                    window.removeEventListenerEventListener("resize", checkWinner);
 
-                }, 300);
-                
+                }, 400);
                 return true;
             }
         }
@@ -162,7 +162,6 @@ function checkWinner() {
     // document.getElementById("line").style.display = "none"; // Hide the line if no winning pattern is found
     return false;
 }
-
 
 
 function makeBox() {
@@ -220,8 +219,7 @@ function playerTurn() {
                     if (moves === 9) {
                         document.querySelector("#container").innerHTML = `<h1>It's a Draw!</h1>`;
                     }
-                }, 300);
-
+                }, 400);
             }
         });
     });

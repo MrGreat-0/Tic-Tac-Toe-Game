@@ -152,7 +152,7 @@ function checkWinner() {
 
                     document.querySelector("#container").innerHTML = `<h1>The Winner is ${pos1Val}</h1>`;
                     line.style.display = "none"; // Hide the line after displaying the winner message
-                    window.removeEventListenerEventListener("resize", checkWinner);
+                    window.removeEventListener("resize", checkWinner);
 
                 }, 400);
                 return true;
